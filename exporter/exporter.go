@@ -2,7 +2,6 @@ package exporter
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -83,7 +82,7 @@ func (k *KafkaExporter) GetMetric(metricName string) {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(response.Datapoints)
+	k.DataPoints = nil
 	err = json.Unmarshal([]byte(response.Datapoints), &k.DataPoints)
 	if err != nil {
 		log.Println(err)

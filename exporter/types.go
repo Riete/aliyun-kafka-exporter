@@ -21,10 +21,10 @@ type KafkaExporter struct {
 	client     *cms.Client
 	DataPoints []struct {
 		InstanceId    string  `json:"instanceId"`
-		Maximum       float64 `json:"Maximum,omitempty"`
-		Value         float64 `json:"Value,omitempty"`
 		ConsumerGroup string  `json:"consumerGroup,omitempty"`
 		Topic         string  `json:"topic,omitempty"`
+		Maximum       float64 `json:"Maximum,omitempty"`
+		Value         float64 `json:"Value,omitempty"`
 	}
 	metrics        map[string]*prometheus.GaugeVec
 	instances      map[string]string
