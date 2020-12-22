@@ -32,15 +32,17 @@ func (k *KafkaExporter) NewClient() {
 	k.client = client
 }
 
-func (k *KafkaExporter) GetInstance() {
+func (k *KafkaExporter) GetInstance() error {
 	client, err := alikafka.NewClientWithAccessKey(regionId, accessKeyId, accessKeySecret)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return err
 	}
 	request := alikafka.CreateGetInstanceListRequest()
 	response, err := client.GetInstanceList(request)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return err
 	}
 	instances := make(map[string]string)
 	for _, v := range response.InstanceList.InstanceVO {
@@ -48,6 +50,7 @@ func (k *KafkaExporter) GetInstance() {
 
 	}
 	k.instances = instances
+	return nil
 }
 
 func (k *KafkaExporter) GetMetricMeta() {
@@ -91,11 +94,14 @@ func (k *KafkaExporter) GetMetric(metricName string) {
 
 func (k *KafkaExporter) InitGauge() {
 	k.NewClient()
-	k.GetInstance()
+	err := k.GetInstance()
+	if err != nil {
+		panic(err)
+	}
 	go func() {
 		for {
 			time.Sleep(5 * time.Minute)
-			k.GetInstance()
+			_ = k.GetInstance()
 		}
 	}()
 	k.GetMetricMeta()
