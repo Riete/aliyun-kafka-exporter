@@ -107,6 +107,9 @@ func (k *KafkaExporter) InitGauge() {
 	k.GetMetricMeta()
 	k.metrics = map[string]*prometheus.GaugeVec{}
 	for _, v := range k.metricMeta {
+		if strings.Contains(v, ".") {
+			v = strings.ReplaceAll(v, ".", "_")
+		}
 		k.metrics[v] = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: "aliyun_kafka",
 			Name:      strings.ToLower(v),
@@ -130,6 +133,9 @@ func (k *KafkaExporter) Collect(ch chan<- prometheus.Metric) {
 				value := d.Value
 				if v == "instance_disk_capacity" {
 					value = d.Maximum
+				}
+				if strings.Contains(v, ".") {
+					v = strings.ReplaceAll(v, ".", "_")
 				}
 				k.metrics[v].With(prometheus.Labels{
 					"instance_id":    d.InstanceId,
